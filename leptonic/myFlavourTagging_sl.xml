@@ -70,11 +70,12 @@
     <parameter name="MagneticField" type="float" value="5"/>
     
     <!-- <parameter name="FlavorTag.D0ProbFileName" type="string" value="/afs/cern.ch/user/s/sredford/Documents/ttH/myMarlin/flavour_tagging_sid_dbd/data/vtxprob/d0prob_zpole.root"/> -->
-    <parameter name="FlavorTag.D0ProbFileName" type="string" value="/eos/user/y/yixuan/clic/mymarlin/flavourtaginfo/d0prob_zpole.root"/>
-    <parameter name="FlavorTag.Z0ProbFileName" type="string" value="/eos/user/y/yixuan/clic/mymarlin/flavourtaginfo/z0prob_zpole.root"/>
+    <!-- the directory under here needs to be changed according to your own one -->
+    <parameter name="FlavorTag.D0ProbFileName" type="string" value="/flavourtaginfo/d0prob_zpole.root"/>
+    <parameter name="FlavorTag.Z0ProbFileName" type="string" value="/flavourtaginfo/z0prob_zpole.root"/>
 
     <!-- <parameter name="FlavorTag.WeightsDirectory" type="string" value="/afs/cern.ch/work/p/proloff1/public/tth_clic_1400/lcfiweights_6jets_more_variables_fixed" /> -->
-    <parameter name="FlavorTag.WeightsDirectory" type="string" value="/eos/user/y/yixuan/clic/mymarlin/flavourtaginfo/lcfiweights_6jets_more_variables_fixed" />
+    <parameter name="FlavorTag.WeightsDirectory" type="string" value="/flavourtaginfo/lcfiweights_6jets_more_variables_fixed" />
     <parameter name="FlavorTag.WeightsPrefix" type="string" value="6jets_more_variables_fixed" />
     <parameter name="FlavorTag.BookName" type="string" value="bdt" />
     <parameter name="FlavorTag.PIDAlgo" type="string" value="lcfiplus" />
