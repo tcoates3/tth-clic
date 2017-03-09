@@ -1,0 +1,671 @@
+<marlin>
+  
+  <execute>
+    <processor name="MyIsolatedLeptonFinderProcessor"/>
+    <processor name="MyIsolatedLeptonFinderProcessor_S"/>
+    <processor name="MyIsolatedLeptonFinderProcessor_L"/>
+    <processor name="MyIsolatedLeptonFinderProcessor_T"/>
+
+    <!--<processor name="MyTauFinderProcessor"/>
+    <processor name="MyTauFinderProcessor_S"/>
+    <processor name="MyTauFinderProcessor_L"/>
+    <processor name="MyTauFinderProcessor_T"/>-->
+
+    <processor name="MyFastJetProcessor_R0p5"/>
+    <processor name="MyFastJetProcessor_R0p6"/>
+    <processor name="MyFastJetProcessor_R0p7"/>
+    <processor name="MyFastJetProcessor_R0p8"/>
+    <processor name="MyFastJetProcessor_R0p9"/>
+    <processor name="MyFastJetProcessor_R1p0"/>
+    <processor name="MyFastJetProcessor_R1p1"/>
+    <processor name="MyFastJetProcessor_R1p2"/>
+    <processor name="MyFastJetProcessor_R1p3"/>
+    <processor name="MyFastJetProcessor_R1p4"/>
+    <processor name="MyFastJetProcessor_R1p5"/>
+
+    <processor name="MyFastJetProcessor_S_R0p5"/>
+    <processor name="MyFastJetProcessor_S_R0p6"/>
+    <processor name="MyFastJetProcessor_S_R0p7"/>
+    <processor name="MyFastJetProcessor_S_R0p8"/>
+    <processor name="MyFastJetProcessor_S_R0p9"/>
+    <processor name="MyFastJetProcessor_S_R1p0"/>
+    <processor name="MyFastJetProcessor_S_R1p1"/>
+    <processor name="MyFastJetProcessor_S_R1p2"/>
+    <processor name="MyFastJetProcessor_S_R1p3"/>
+    <processor name="MyFastJetProcessor_S_R1p4"/>
+    <processor name="MyFastJetProcessor_S_R1p5"/>
+
+    <processor name="MyFastJetProcessor_L_R0p5"/>
+    <processor name="MyFastJetProcessor_L_R0p6"/>
+    <processor name="MyFastJetProcessor_L_R0p7"/>
+    <processor name="MyFastJetProcessor_L_R0p8"/>
+    <processor name="MyFastJetProcessor_L_R0p9"/>
+    <processor name="MyFastJetProcessor_L_R1p0"/>
+    <processor name="MyFastJetProcessor_L_R1p1"/>
+    <processor name="MyFastJetProcessor_L_R1p2"/>
+    <processor name="MyFastJetProcessor_L_R1p3"/>
+    <processor name="MyFastJetProcessor_L_R1p4"/>
+    <processor name="MyFastJetProcessor_L_R1p5"/>
+
+    <processor name="MyFastJetProcessor_T_R0p5"/>
+    <processor name="MyFastJetProcessor_T_R0p6"/>
+    <processor name="MyFastJetProcessor_T_R0p7"/>
+    <processor name="MyFastJetProcessor_T_R0p8"/>
+    <processor name="MyFastJetProcessor_T_R0p9"/>
+    <processor name="MyFastJetProcessor_T_R1p0"/>
+    <processor name="MyFastJetProcessor_T_R1p1"/>
+    <processor name="MyFastJetProcessor_T_R1p2"/>
+    <processor name="MyFastJetProcessor_T_R1p3"/>
+    <processor name="MyFastJetProcessor_T_R1p4"/>
+    <processor name="MyFastJetProcessor_T_R1p5"/>
+
+    <processor name="MyLCIOOutputProcessor"/>
+  </execute>
+  
+  <global>
+    <parameter name="LCIOInputFiles"> /eos/user/y/yixuan/clic/lcsim-2_5/target/testRECtest.slcio </parameter>
+    <parameter name="GearXMLFile"> </parameter>  
+    <parameter name="MaxRecordNumber" value="-1" />  
+    <parameter name="SkipNEvents" value="0" />  
+    <parameter name="SupressCheck" value="false" />  
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter> 
+  </global>
+
+  <!-- ISOLATED LEPTONS -->
+  <processor name="MyIsolatedLeptonFinderProcessor" type="IsolatedLeptonFinderProcessor">
+    <parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle"> PandoraPFOCollection </parameter>
+    <parameter name="OutputCollectionIsolatedLeptons" type="string" lcioOutType="ReconstructedParticle">Isolep </parameter>
+    <parameter name="OutputCollectionWithoutIsolatedLepton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoLep </parameter>
+
+    <parameter name="CosConeAngle" type="float">0.995 </parameter>
+    <parameter name="IsolationMinimumConeEnergy" type="float">0 </parameter>
+    <parameter name="IsolationMaximumConeEnergy" type="float">5000 </parameter>
+    <parameter name="IsolationMinimumTrackEnergy" type="float">15 </parameter>
+    <parameter name="IsolationMaximumTrackEnergy" type="float">1000 </parameter>
+    
+    <parameter name="UsePolynomialIsolation" type="bool">true </parameter>
+    <!--Polynomial cut (A) on track energy and cone energy: Econe^2 < A*Etrk^2+B*Etrk+C-->
+    <parameter name="IsolationPolynomialCutA" type="float">0.0 </parameter>
+    <parameter name="IsolationPolynomialCutB" type="float">0.1 </parameter>
+    <parameter name="IsolationPolynomialCutC" type="float">100. </parameter>
+
+    <parameter name="UsePID" type="bool">true </parameter>
+    <parameter name="MuonMinEcalToHcalFraction" type="float">0.05 </parameter>
+    <parameter name="MuonMaxEcalToHcalFraction" type="float">0.3 </parameter>
+    <parameter name="ElectronMinEcalToHcalFraction" type="float">0.9 </parameter>
+
+    <parameter name="UseImpactParameter" type="bool">true </parameter>
+    <parameter name="ImpactParameterMinD0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxD0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMinZ0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxZ0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMin3D" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMax3D" type="float">0.05 </parameter>
+  </processor>
+
+  <processor name="MyIsolatedLeptonFinderProcessor_S" type="IsolatedLeptonFinderProcessor">
+    <parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle"> SelectedPandoraPFOCollection </parameter>
+    <parameter name="OutputCollectionIsolatedLeptons" type="string" lcioOutType="ReconstructedParticle">Isolep_Selected </parameter>
+    <parameter name="OutputCollectionWithoutIsolatedLepton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoLep_Selected </parameter>
+
+    <parameter name="CosConeAngle" type="float">0.995 </parameter>
+    <parameter name="IsolationMinimumConeEnergy" type="float">0 </parameter>
+    <parameter name="IsolationMaximumConeEnergy" type="float">5000 </parameter>
+    <parameter name="IsolationMinimumTrackEnergy" type="float">15 </parameter>
+    <parameter name="IsolationMaximumTrackEnergy" type="float">1000 </parameter>
+    
+    <parameter name="UsePolynomialIsolation" type="bool">true </parameter>
+    <!--Polynomial cut (A) on track energy and cone energy: Econe^2 < A*Etrk^2+B*Etrk+C-->
+    <parameter name="IsolationPolynomialCutA" type="float">0.0 </parameter>
+    <parameter name="IsolationPolynomialCutB" type="float">0.1 </parameter>
+    <parameter name="IsolationPolynomialCutC" type="float">100. </parameter>
+
+    <parameter name="UsePID" type="bool">true </parameter>
+    <parameter name="MuonMinEcalToHcalFraction" type="float">0.05 </parameter>
+    <parameter name="MuonMaxEcalToHcalFraction" type="float">0.3 </parameter>
+    <parameter name="ElectronMinEcalToHcalFraction" type="float">0.9 </parameter>
+
+    <parameter name="UseImpactParameter" type="bool">true </parameter>
+    <parameter name="ImpactParameterMinD0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxD0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMinZ0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxZ0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMin3D" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMax3D" type="float">0.05 </parameter>
+  </processor>
+
+  <processor name="MyIsolatedLeptonFinderProcessor_L" type="IsolatedLeptonFinderProcessor">
+    <parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle"> LooseSelectedPandoraPFOCollection </parameter>
+    <parameter name="OutputCollectionIsolatedLeptons" type="string" lcioOutType="ReconstructedParticle">Isolep_LooseSelected </parameter>
+    <parameter name="OutputCollectionWithoutIsolatedLepton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoLep_LooseSelected </parameter>
+
+    <parameter name="CosConeAngle" type="float">0.995 </parameter>
+    <parameter name="IsolationMinimumConeEnergy" type="float">0 </parameter>
+    <parameter name="IsolationMaximumConeEnergy" type="float">5000 </parameter>
+    <parameter name="IsolationMinimumTrackEnergy" type="float">15 </parameter>
+    <parameter name="IsolationMaximumTrackEnergy" type="float">1000 </parameter>
+    
+    <parameter name="UsePolynomialIsolation" type="bool">true </parameter>
+    <!--Polynomial cut (A) on track energy and cone energy: Econe^2 < A*Etrk^2+B*Etrk+C-->
+    <parameter name="IsolationPolynomialCutA" type="float">0.0 </parameter>
+    <parameter name="IsolationPolynomialCutB" type="float">0.1 </parameter>
+    <parameter name="IsolationPolynomialCutC" type="float">100. </parameter>
+
+    <parameter name="UsePID" type="bool">true </parameter>
+    <parameter name="MuonMinEcalToHcalFraction" type="float">0.05 </parameter>
+    <parameter name="MuonMaxEcalToHcalFraction" type="float">0.3 </parameter>
+    <parameter name="ElectronMinEcalToHcalFraction" type="float">0.9 </parameter>
+
+    <parameter name="UseImpactParameter" type="bool">true </parameter>
+    <parameter name="ImpactParameterMinD0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxD0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMinZ0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxZ0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMin3D" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMax3D" type="float">0.05 </parameter>
+  </processor>
+
+  <processor name="MyIsolatedLeptonFinderProcessor_T" type="IsolatedLeptonFinderProcessor">
+    <parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle"> TightSelectedPandoraPFOCollection </parameter>
+    <parameter name="OutputCollectionIsolatedLeptons" type="string" lcioOutType="ReconstructedParticle">Isolep_TightSelected </parameter>
+    <parameter name="OutputCollectionWithoutIsolatedLepton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoLep_TightSelected </parameter>
+
+    <parameter name="CosConeAngle" type="float">0.995 </parameter>
+    <parameter name="IsolationMinimumConeEnergy" type="float">0 </parameter>
+    <parameter name="IsolationMaximumConeEnergy" type="float">5000 </parameter>
+    <parameter name="IsolationMinimumTrackEnergy" type="float">15 </parameter>
+    <parameter name="IsolationMaximumTrackEnergy" type="float">1000 </parameter>
+    
+    <parameter name="UsePolynomialIsolation" type="bool">true </parameter>
+    <!--Polynomial cut (A) on track energy and cone energy: Econe^2 < A*Etrk^2+B*Etrk+C-->
+    <parameter name="IsolationPolynomialCutA" type="float">0.0 </parameter>
+    <parameter name="IsolationPolynomialCutB" type="float">0.1 </parameter>
+    <parameter name="IsolationPolynomialCutC" type="float">100. </parameter>
+
+    <parameter name="UsePID" type="bool">true </parameter>
+    <parameter name="MuonMinEcalToHcalFraction" type="float">0.05 </parameter>
+    <parameter name="MuonMaxEcalToHcalFraction" type="float">0.3 </parameter>
+    <parameter name="ElectronMinEcalToHcalFraction" type="float">0.9 </parameter>
+
+    <parameter name="UseImpactParameter" type="bool">true </parameter>
+    <parameter name="ImpactParameterMinD0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxD0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMinZ0" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMaxZ0" type="float">0.05 </parameter>
+    <parameter name="ImpactParameterMin3D" type="float">0.0 </parameter>
+    <parameter name="ImpactParameterMax3D" type="float">0.05 </parameter>
+  </processor>
+
+  <!-- TAUS -->
+  <processor name="MyTauFinderProcessor" type="TauFinder">
+    <parameter name="PFOCollection" value="PandoraPFOsWithoutIsoLep"/>
+    <parameter name="TauRecCollection" value="Taus"/>
+    <parameter name="TauRecRestCollection" value="PandoraPFOsWithoutLeptons"/>
+    <parameter name="TauRecLinkCollectionName" value="TauRecLink_PFO"/>
+    <parameter name="pt_cut" value="2"/> 
+    <parameter name="cosT_cut" value="1.1"/>
+    <parameter name="R0_cut" value="0.01"/>
+    <parameter name="ptseed" value="10"/> 
+    <parameter name="searchConeAngle" value="0.04"/> 
+    <parameter name="isolationConeAngle" value="0.25"/>
+    <parameter name="isolationEnergy" value="5.0"/> 
+    <parameter name="isolationNParticles" value="5"/>
+    <parameter name="invariant_mass" value="1.5"/> 
+  </processor>
+
+  <processor name="MyTauFinderProcessor_S" type="TauFinder">
+    <parameter name="PFOCollection" value="PandoraPFOsWithoutIsoLep_Selected"/>
+    <parameter name="TauRecCollection" value="Taus_Selected"/>
+    <parameter name="TauRecRestCollection" value="PandoraPFOsWithoutLeptons_Selected"/>
+    <parameter name="TauRecLinkCollectionName" value="TauRecLink_PFO_Selected"/>
+    <parameter name="pt_cut" value="2"/> 
+    <parameter name="cosT_cut" value="1.1"/>
+    <parameter name="R0_cut" value="0.01"/>
+    <parameter name="ptseed" value="10"/> 
+    <parameter name="searchConeAngle" value="0.04"/> 
+    <parameter name="isolationConeAngle" value="0.25"/>
+    <parameter name="isolationEnergy" value="5.0"/> 
+    <parameter name="isolationNParticles" value="5"/>
+    <parameter name="invariant_mass" value="1.5"/> 
+  </processor>
+
+  <processor name="MyTauFinderProcessor_L" type="TauFinder">
+    <parameter name="PFOCollection" value="PandoraPFOsWithoutIsoLep_LooseSelected"/>
+    <parameter name="TauRecCollection" value="Taus_LooseSelected"/>
+    <parameter name="TauRecRestCollection" value="PandoraPFOsWithoutLeptons_LooseSelected"/>
+    <parameter name="TauRecLinkCollectionName" value="TauRecLink_PFO_LooseSelected"/>
+    <parameter name="pt_cut" value="2"/> 
+    <parameter name="cosT_cut" value="1.1"/>
+    <parameter name="R0_cut" value="0.01"/>
+    <parameter name="ptseed" value="10"/> 
+    <parameter name="searchConeAngle" value="0.04"/> 
+    <parameter name="isolationConeAngle" value="0.25"/>
+    <parameter name="isolationEnergy" value="5.0"/> 
+    <parameter name="isolationNParticles" value="5"/>
+    <parameter name="invariant_mass" value="1.5"/> 
+  </processor>
+
+  <processor name="MyTauFinderProcessor_T" type="TauFinder">
+    <parameter name="PFOCollection" value="PandoraPFOsWithoutIsoLep_TightSelected"/>
+    <parameter name="TauRecCollection" value="Taus_TightSelected"/>
+    <parameter name="TauRecRestCollection" value="PandoraPFOsWithoutLeptons_TightSelected"/>
+    <parameter name="TauRecLinkCollectionName" value="TauRecLink_PFO_TightSelected"/>
+    <parameter name="pt_cut" value="2"/> 
+    <parameter name="cosT_cut" value="1.1"/>
+    <parameter name="R0_cut" value="0.01"/>
+    <parameter name="ptseed" value="10"/> 
+    <parameter name="searchConeAngle" value="0.04"/> 
+    <parameter name="isolationConeAngle" value="0.25"/>
+    <parameter name="isolationEnergy" value="5.0"/> 
+    <parameter name="isolationNParticles" value="5"/>
+    <parameter name="invariant_mass" value="1.5"/> 
+  </processor>
+
+  <!-- JETS -->
+  <!-- All PFOs -->
+  <processor name="MyFastJetProcessor_R0p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R0p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R0p5 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R0p6" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.6 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R0p6 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R0p6 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R0p7" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.7 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R0p7 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R0p7 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R0p8" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.8 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R0p8 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R0p8 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R0p9" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.9 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R0p9 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R0p9 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p0" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.0 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p0 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p0 </parameter> 
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p1" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.1 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p1 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p1 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p2" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.2 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p2 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p2 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p3" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.3 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p3 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p3 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p4" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.4 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p4 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p4 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_R1p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_R1p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_R1p5 </parameter>
+  </processor>
+
+  <!-- Selected -->
+  <processor name="MyFastJetProcessor_S_R0p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R0p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R0p5 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R0p6" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.6 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R0p6 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R0p6 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R0p7" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.7 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R0p7 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R0p7 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R0p8" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.8 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R0p8 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R0p8 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R0p9" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.9 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R0p9 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R0p9 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p0" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.0 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p0 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p0 </parameter> 
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p1" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.1 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p1 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p1 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p2" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.2 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p2 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p2 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p3" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.3 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p3 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p3 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p4" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.4 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p4 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p4 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_S_R1p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_S_R1p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_Selected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_S_R1p5 </parameter>
+  </processor>
+
+  <!-- Loose -->
+  <processor name="MyFastJetProcessor_L_R0p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R0p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R0p5 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R0p6" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.6 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R0p6 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R0p6 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R0p7" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.7 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R0p7 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R0p7 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R0p8" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.8 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R0p8 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R0p8 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R0p9" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.9 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R0p9 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R0p9 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p0" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.0 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p0 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p0 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p1" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.1 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p1 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p1 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p2" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.2 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p2 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p2 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p3" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.3 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p3 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p3 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p4" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.4 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p4 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p4 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_L_R1p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_L_R1p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_LooseSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_L_R1p5 </parameter>
+  </processor>
+
+  <!-- Tight -->
+  <processor name="MyFastJetProcessor_T_R0p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R0p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R0p5 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R0p6" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.6 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R0p6 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R0p6 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R0p7" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.7 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R0p7 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R0p7 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R0p8" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.8 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R0p8 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R0p8 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R0p9" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 0.9 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R0p9 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R0p9 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p0" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.0 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p0 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p0 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p1" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.1 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p1 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p1 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p2" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.2 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p2 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p2 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p3" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.3 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p3 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p3 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p4" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.4 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p4 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p4 </parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor_T_R1p5" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec"> kt_algorithm 1.5 </parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets_T_R1p5 </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutLeptons_TightSelected </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsInJets_T_R1p5 </parameter>
+  </processor>
+
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <parameter name="LCIOOutputFile" type="string"> testVertexed1.slcio </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+  </processor>
+  
+</marlin>

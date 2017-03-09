@@ -1,0 +1,274 @@
+<lcsim xmlns:lcsim="http://www.lcsim.org/schemas/lcsim/1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+    xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/lcsim/1.0/lcsim.xsd">
+    <inputFiles>
+        <file>${inputFile}</file>
+        <!--
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_100.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_102.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_103.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_105.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_106.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_107.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_108.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_109.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_10.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_111.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_114.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_115.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_116.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_117.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_118.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_121.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_122.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_123.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_125.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_126.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_127.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_128.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_129.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_130.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_131.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_132.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_133.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_134.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_135.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_136.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_137.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_138.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_139.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_140.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_142.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_143.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_144.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_145.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_147.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_148.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_14.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_151.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_152.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_153.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_155.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_156.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_157.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_158.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_15.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_161.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_162.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_163.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_164.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_167.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_169.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_16.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_170.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_172.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_173.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_176.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_177.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_178.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_179.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_17.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_182.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_184.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_185.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_187.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_188.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_189.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_18.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_190.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_191.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_192.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_193.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_196.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_197.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_198.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_199.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_200.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_202.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_205.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_206.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_208.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_209.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_20.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_210.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_212.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_213.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_214.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_215.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_217.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_219.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_21.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_220.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_221.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_223.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_224.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_225.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_226.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_228.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_22.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_230.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_231.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_233.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_234.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_235.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_237.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_239.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_23.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_240.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_242.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_243.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_244.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_245.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_248.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_249.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_250.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_251.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_252.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_254.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_255.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_256.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_257.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_258.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_25.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_260.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_261.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_262.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_263.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_265.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_266.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_269.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_26.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_270.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_271.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_272.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_273.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_274.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_277.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_278.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_27.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_280.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_281.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_282.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_283.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_284.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_287.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_288.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_28.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_293.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_294.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_295.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_29.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_30.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_31.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_36.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_38.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_3.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_40.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_41.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_42.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_43.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_45.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_46.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_47.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_49.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_50.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_51.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_52.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_53.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_55.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_56.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_57.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_59.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_5.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_60.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_61.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_63.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_64.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_65.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_67.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_68.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_6.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_70.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_71.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_73.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_74.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_75.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_76.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_78.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_79.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_81.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_82.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_84.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_85.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_86.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_87.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_89.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_8.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_90.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_91.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_92.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_93.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_94.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_97.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_98.slcio</file>
+	<file>/eos/user/y/yixuan/REC/tth-ln4q-hbb_rec_2441_99.slcio</file>
+	-->
+    </inputFiles>
+    
+    <control>
+      <numberOfEvents>-1</numberOfEvents>
+      <verbose>true</verbose>
+      <printDriverStatistics>true</printDriverStatistics>
+      <printDriversDetailed>true</printDriversDetailed>
+    </control>
+
+    <classpath>
+        <jarUrl>http://proloff.web.cern.ch/proloff/detectors/analysis.jar</jarUrl>
+    </classpath>
+    
+    <execute>
+        <driver name="EventMarkerDriver"/>
+        <driver name="TrackSubdetectorHitNumbers"/>
+        <driver name="ClusterEnergyCalculator"/>
+        <driver name="RECWriter"/>
+	<driver name="DSTWriter"/>
+    </execute>
+    
+    <drivers>
+        <!-- Give feedback on loop progress -->
+        <driver name="EventMarkerDriver"
+                type="org.lcsim.job.EventMarkerDriver">
+            <eventInterval>10</eventInterval>
+        </driver>
+        
+        <!-- Add hit numbers per subdetector -->
+        <driver name="TrackSubdetectorHitNumbers"
+                type="contrib.proloff.vertex.TrackSubdetectorHitNumbersDriver">
+        </driver>
+        
+        <!-- Calculate subdetector energies for all clusters -->
+        <driver name="ClusterEnergyCalculator"
+                type="org.lcsim.recon.postrecon.leptonID.ClusterSubdetectorEnergiesWriter">
+        </driver>
+
+
+        <!-- Write files with all collections -->
+        <driver name="RECWriter"
+                type="org.lcsim.util.loop.LCIODriver">
+            <outputFilePath>testREC1.slcio</outputFilePath>
+        </driver>
+
+        <!-- Write files with necessary collections -->
+        <driver name="DSTWriter"
+                type="org.lcsim.util.loop.LCIODriver">
+            <outputFilePath></outputFilePath>
+            <writeOnlyCollections>PandoraPFOCollection RecoMCTruthLink MCParticle SelectedPandoraPFOCollection ReconClusters Tracks TightSelectedPandoraPFOCollection LooseSelectedPandoraPFOCollection </writeOnlyCollections>
+        </driver>
+
+	<driver name="Writer" type="org.lcsim.util.loop.LCIODriver">
+	  <outputFilePath>testOutput1.slcio</outputFilePath>
+	</driver> 
+
+    </drivers>
+</lcsim>
+
