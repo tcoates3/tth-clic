@@ -1,0 +1,1503 @@
+#define tth_analysis_cxx
+#include "tth_analysis.h"
+#include <TH1.h>
+#include <TH2.h>
+#include <TTree.h>
+#include <TCanvas.h>
+#include <TLorentzVector.h>
+#include <TMath.h>
+#include <TSystem.h>
+#include <TRandom.h>
+#include <TObjArray.h>
+
+#include "EVENT/LCCollection.h"
+#include "EVENT/LCEvent.h"
+#include "EVENT/MCParticle.h"
+#include "EVENT/ReconstructedParticle.h"
+#include "EVENT/LCRelation.h"
+#include "IO/LCReader.h"
+#include "IOIMPL/LCFactory.h"
+#include "IOIMPL/LCCollectionIOVec.h"
+#include "EVENT/LCIntVec.h"
+#include "UTIL/PIDHandler.h"
+
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <sstream>
+#include <fstream>
+#include <algorithm> 
+
+#include "jama_eig.h"
+#include "tnt_math_utils.h"
+
+using namespace std;
+
+Int_t treeMaker(std::string fileName, TString outfileName) {
+  // to make ntuples for the BDT
+  IO::LCReader* lcReader = IOIMPL::LCFactory::getInstance()->createLCReader() ;
+  lcReader->open( fileName ) ;
+  cout << "Processing " << fileName << endl;
+
+  TFile outfile( outfileName,"RECREATE");
+
+  TTree *tth_tree = new TTree("tth_tree","");
+  //cout << "test 0" <<endl;
+  // Leptons
+  Int_t nLeptons, nIsoleps, nTaus, l_id, lepton_trueid;
+  Double_t l_coneEnergy, l_calE;
+  Double_t l_pt, l_theta, l_px, l_py, l_pz, l_e;
+  Double_t l_D0, l_Z0, l_R0;
+
+  tth_tree->Branch("nLeptons",&nLeptons,"nLeptons/I");
+  tth_tree->Branch("nIsoleps",&nIsoleps,"nIsoleps/I");
+  tth_tree->Branch("nTaus",&nTaus,"nTaus/I");
+  tth_tree->Branch("l_id",&l_id,"l_id/I");
+  tth_tree->Branch("lepton_trueid",&lepton_trueid,"lepton_trueid/I");
+  tth_tree->Branch("l_coneEnergy",&l_coneEnergy,"l_coneEnergy/D");
+  tth_tree->Branch("l_calE",&l_calE,"l_calE/D");
+  tth_tree->Branch("l_pt",&l_pt,"l_pt/D");
+  tth_tree->Branch("l_theta",&l_theta,"l_theta/D");
+  tth_tree->Branch("l_px",&l_px,"l_px/D");
+  tth_tree->Branch("l_py",&l_py,"l_py/D");
+  tth_tree->Branch("l_pz",&l_pz,"l_pz/D");
+  tth_tree->Branch("l_e",&l_e,"l_e/D");
+  tth_tree->Branch("l_D0",&l_D0,"l_D0/D");
+  tth_tree->Branch("l_Z0",&l_Z0,"l_Z0/D");
+  tth_tree->Branch("l_R0",&l_R0,"l_R0/D");
+
+  // Jets
+  Int_t nJets;
+  Double_t Evis_jets;
+  Double_t btag_0,btag_1,btag_2,btag_3,btag_4,btag_5;
+  Double_t ctag_0,ctag_1,ctag_2,ctag_3,ctag_4,ctag_5;
+  Double_t y12,y23,y34,y45,y56,y67,y78,y89;
+
+  tth_tree->Branch("nJets",&nJets,"nJets/I");
+  tth_tree->Branch("Evis_jets",&Evis_jets,"Evis_jets/D");
+  tth_tree->Branch("btag_0",&btag_0,"btag_0/D");
+  tth_tree->Branch("btag_1",&btag_1,"btag_1/D");
+  tth_tree->Branch("btag_2",&btag_2,"btag_2/D");
+  tth_tree->Branch("btag_3",&btag_3,"btag_3/D");
+  tth_tree->Branch("btag_4",&btag_4,"btag_4/D");
+  tth_tree->Branch("btag_5",&btag_5,"btag_5/D");
+
+  tth_tree->Branch("ctag_0",&ctag_0,"ctag_0/D");
+  tth_tree->Branch("ctag_1",&ctag_1,"ctag_1/D");
+  tth_tree->Branch("ctag_2",&ctag_2,"ctag_2/D");
+  tth_tree->Branch("ctag_3",&ctag_3,"ctag_3/D");
+  tth_tree->Branch("ctag_4",&ctag_4,"ctag_4/D");
+  tth_tree->Branch("ctag_5",&ctag_5,"ctag_5/D");
+
+  tth_tree->Branch("y12",&y12,"y12/D");
+  tth_tree->Branch("y23",&y23,"y23/D");
+  tth_tree->Branch("y34",&y34,"y34/D");
+  tth_tree->Branch("y45",&y45,"y45/D");
+  tth_tree->Branch("y56",&y56,"y56/D");
+  tth_tree->Branch("y67",&y67,"y67/D");
+  tth_tree->Branch("y78",&y78,"y78/D");
+  tth_tree->Branch("y89",&y89,"y89/D");
+
+  // Neutrino
+  Double_t nu_pt, nu_px, nu_py, nu_pz, nu_e;
+
+  tth_tree->Branch("nu_pt",&nu_pt,"nu_pt/D");
+  tth_tree->Branch("nu_px",&nu_px,"nu_px/D");
+  tth_tree->Branch("nu_py",&nu_py,"nu_py/D");
+  tth_tree->Branch("nu_pz",&nu_pz,"nu_pz/D");
+  tth_tree->Branch("nu_e",&nu_e,"nu_e/D");
+
+  // WtH
+  Double_t W_qq_mass, W_lnu_mass, t_bqq_mass, t_blnu_mass;
+  Double_t h_bb_mass, tHang_min, tHang_max, dec_ang_min, dec_ang_max;
+  Double_t jetmatch_chi2;
+
+  tth_tree->Branch("W_qq_mass",&W_qq_mass,"W_qq_mass/D");
+  tth_tree->Branch("W_lnu_mass",&W_lnu_mass,"W_lnu_mass/D");
+  tth_tree->Branch("t_bqq_mass",&t_bqq_mass,"t_bqq_mass/D");
+  tth_tree->Branch("t_blnu_mass",&t_blnu_mass,"t_blnu_mass/D");
+  tth_tree->Branch("h_bb_mass",&h_bb_mass,"h_bb_mass/D");
+  tth_tree->Branch("tHang_min",&tHang_min,"tHang_min/D");
+  tth_tree->Branch("tHang_max",&tHang_max,"tHang_max/D");
+  tth_tree->Branch("dec_ang_min",&dec_ang_min,"dec_ang_min/D");
+  tth_tree->Branch("dec_ang_max",&dec_ang_max,"dec_ang_max/D");
+  tth_tree->Branch("jetmatch_chi2",&jetmatch_chi2,"jetmatch_chi2/D");
+
+  // Event
+  Int_t nPFOs;
+  Double_t missing_pt;
+  Double_t pfo_thrust, pfo_oblateness, pfo_sphericity, pfo_aplanarity;
+
+  tth_tree->Branch("nPFOs",&nPFOs,"nPFOs/I");
+  tth_tree->Branch("missing_pt",&missing_pt,"missing_pt/D");
+  tth_tree->Branch("pfo_thrust",&pfo_thrust,"pfo_thrust/D");
+  tth_tree->Branch("pfo_oblateness",&pfo_oblateness,"pfo_oblateness/D");
+  tth_tree->Branch("pfo_sphericity",&pfo_sphericity,"pfo_sphericity/D");
+  tth_tree->Branch("pfo_aplanarity",&pfo_aplanarity,"pfo_aplanarity/D");
+
+  const Double_t mass_W = 79.4;
+  const Double_t mass_t = 172.2;
+  const Double_t mass_h = 119.8;
+  
+  const Double_t sigma_W_low = 6.0;
+  const Double_t sigma_W_high = 6.5;
+  const Double_t sigma_t_low = 13.0;
+  const Double_t sigma_t_high = 10.0;
+  const Double_t sigma_h_low = 12.5;
+  const Double_t sigma_h_high = 7.5;
+  //cout << "test 1" <<endl;
+  Int_t nEvt = 0;
+  EVENT::LCEvent* event = 0;
+
+  while( (event = lcReader->readNextEvent()) != 0 ) {
+    nEvt++;
+
+    Double_t sum_px = 0.;
+    Double_t sum_py = 0.;
+    Double_t sum_pz = 0.;
+    Double_t sum_e = 0.;
+    Double_t jet_sum_e = 0.;
+    Double_t btag_vals, ctag_vals;
+    //cout <<"test 2"<<endl;
+    
+    // Leptons
+    EVENT::LCCollection* isoleps = event->getCollection("Isolep_Selected");
+    //EVENT::LCCollection* taus = event->getCollection("Taus"); // comment out for old
+
+    //nLeptons = isoleps->getNumberOfElements() + taus->getNumberOfElements(); // new
+    nLeptons = isoleps->getNumberOfElements(); // old
+    nIsoleps = isoleps->getNumberOfElements();
+    //nTaus = taus->getNumberOfElements(); // new
+    nTaus = 0; // old
+
+    EVENT::MCParticle* gen_lepton = getGeneratedLepton(event);
+    if (gen_lepton){
+      lepton_trueid = gen_lepton->getPDG();
+    }
+    else{
+      lepton_trueid = 0;
+    }
+
+    if (nLeptons == 1){
+      EVENT::ReconstructedParticle* leptoni;
+      if (nIsoleps == 1){
+	leptoni = (EVENT::ReconstructedParticle*) isoleps->getElementAt(0);
+      }
+      //else{ // comment out for old
+      //leptoni = (EVENT::ReconstructedParticle*) taus->getElementAt(0);
+      //}
+      TLorentzVector* mi = new TLorentzVector(leptoni->getMomentum());
+      l_px = mi->Px();
+      l_py = mi->Py();
+      l_pz = mi->Pz();
+      l_e = mi->E();
+      l_pt = mi->Pt();
+      l_theta = mi->Theta();
+      l_id = leptoni->getType();
+    
+      const EVENT::TrackVec & trkvec = (const EVENT::TrackVec) leptoni->getTracks();
+      if (trkvec.size()>0){
+	l_D0 = abs(trkvec[0]->getD0());
+	l_Z0 = abs(trkvec[0]->getZ0());
+	l_R0 = sqrt( l_D0*l_D0 + l_Z0*l_Z0 );
+      }
+      else{
+	l_D0 = 99;
+	l_Z0 = 99;
+	l_R0 = 99;
+      }
+
+      std::vector<EVENT::Cluster*> clusters = (std::vector<EVENT::Cluster*>) leptoni->getClusters();
+      float ecal = 0;
+      float hcal = 0;
+      for ( std::vector<EVENT::Cluster*>::const_iterator iCluster=clusters.begin(); iCluster!=clusters.end(); ++iCluster) {
+	ecal += (*iCluster)->getSubdetectorEnergies()[0];
+	hcal += (*iCluster)->getSubdetectorEnergies()[1]; 
+      } 
+      if (ecal+hcal == 0){
+	l_calE = 2;
+      }
+      else{
+	l_calE = ecal/(ecal+hcal);
+      }
+
+      float coneE = 0;
+      float cosConeAngle = 0.995;
+      TVector3 P(l_px,l_py,l_pz);
+      EVENT::LCCollection* pfo = event->getCollection("PandoraPFOsWithoutIsoLep_Selected"); // old
+      //EVENT::LCCollection* pfo = event->getCollection("PandoraPFOsWithoutLeptons_Selected"); // new
+      for (int i = 0; i < pfo->getNumberOfElements(); i++) {
+	EVENT::ReconstructedParticle* pfoi = (EVENT::ReconstructedParticle*) pfo->getElementAt(i);
+	TVector3 P_i( pfoi->getMomentum() );
+	float cosTheta = P.Dot( P_i )/(P.Mag()*P_i.Mag());
+	if ( cosTheta >= cosConeAngle ){
+	  coneE += pfoi->getEnergy(); 
+	}
+      }
+      l_coneEnergy = coneE;
+
+      sum_px += l_px;
+      sum_py += l_py;
+      sum_pz += l_pz;
+      sum_e += l_e;
+    } // end of if nleptons == 1
+
+    else{
+      l_px = -9999;
+      l_py = -9999;
+      l_pz = -9999;
+      l_e = -9999;
+      l_pt = -9999;
+      l_theta = -9999;
+      l_id = -9999;
+
+      l_D0 = -9999;
+      l_Z0 = -9999;
+      l_R0 = -9999;
+
+      l_calE = -1;
+      l_coneEnergy = -1;
+    }
+
+    // Jets
+    //EVENT::LCCollection* jets = event->getCollection("RefinedJets");
+    //EVENT::LCCollection* jets = event->getCollection("RefinedJets_6jets"); // for full analysis
+    EVENT::LCCollection* jets = event->getCollection("kt_6jets"); // testing
+    nJets = jets->getNumberOfElements();
+
+    vector<TLorentzVector> pfo_jets;
+    for (int i = 0; i < jets->getNumberOfElements(); i++) {
+      EVENT::ReconstructedParticle* jeti = (EVENT::ReconstructedParticle*) jets->getElementAt(i);
+      TLorentzVector* mi = new TLorentzVector(jeti->getMomentum());
+      pfo_jets.push_back(TLorentzVector(mi->Px(), mi->Py(), mi->Pz(), mi->E()));
+      sum_px += mi->Px();
+      sum_py += mi->Py();
+      sum_pz += mi->Pz();
+      sum_e += mi->E();
+      jet_sum_e += mi->E();
+    }
+    Evis_jets = jet_sum_e;
+    
+    vector<int> numbers_6jets;
+    numbers_6jets.push_back(0);
+    numbers_6jets.push_back(1);
+    numbers_6jets.push_back(2);
+    numbers_6jets.push_back(3);
+    numbers_6jets.push_back(4);
+    numbers_6jets.push_back(5);
+
+    Double_t chi2_min = 999999;
+
+    TLorentzVector W_min;
+    TLorentzVector higgs_min;
+    TLorentzVector top_min;
+    TLorentzVector first_jet_from_higgs_min;
+    TLorentzVector second_jet_from_higgs_min;
+
+    Double_t chi2_here;
+    TLorentzVector W_here, top_here, higgs_here, other_b;
+    TLorentzVector jet_here;
+
+    if (jets->getNumberOfElements() == 6){
+      /*
+      UTIL::PIDHandler pidh ( jets ) ;
+      const EVENT::LCIntVec& algolist =  (EVENT::LCIntVec&) pidh.getAlgorithmIDs() ;
+      int algo = -99999;
+      if ( algolist.size() != 0 ) algo = pidh.getAlgorithmID( "lcfiplus" ) ;
+	
+      vector<pair<Double_t,Double_t> >os;
+
+      for(int i = 0; i < jets->getNumberOfElements(); i++){
+      	ReconstructedParticle* jet = dynamic_cast< ReconstructedParticle* >( jets->getElementAt(i) );
+      
+      	if ( algolist.size() != 0 ) {
+      	  const ParticleID& jetID = pidh.getParticleID( jet , algo ) ;
+      	  FloatVec params = jetID.getParameters() ;
+      	  btag_vals = params[pidh.getParameterIndex( algo , "BTag"  )];
+      	  ctag_vals = params[pidh.getParameterIndex( algo , "CTag"  )];
+      	  //cout << "btag: " << btag_vals << " ctag: " << ctag_vals << endl;
+      	  os.push_back(pair<Double_t,Double_t>(btag_vals, ctag_vals));
+      	}
+      }
+
+      sort(os.begin(),os.end(),compare);
+      // for(int i=0;i<os.size();i++)
+      //   cout << os.at(i).first << " " << os.at(i).second << endl;
+      
+      btag_0 = os.at(0).first;
+      btag_1 = os.at(1).first;
+      btag_2 = os.at(2).first;
+      btag_3 = os.at(3).first;
+      btag_4 = os.at(4).first;
+      btag_5 = os.at(5).first;
+
+      ctag_0 = os.at(0).second;
+      ctag_1 = os.at(1).second;
+      ctag_2 = os.at(2).second;
+      ctag_3 = os.at(3).second;
+      ctag_4 = os.at(4).second;
+      ctag_5 = os.at(5).second;
+      */
+      UTIL::PIDHandler pid_here(jets);
+      const IntVec& algo_ids_here = pid_here.getAlgorithmIDs();
+      cout << "algo size is " << algo_ids_here.size() <<endl;
+      int algo_id_here = -99999;
+      try {
+      	if (algo_ids_here.size() != 0) algo_id_here = pid_here.getAlgorithmID("yth");
+      	if (jets->getNumberOfElements() > 0) {
+      	  ReconstructedParticle* first_jet = dynamic_cast<ReconstructedParticle*>(jets->getElementAt(0));
+      	  const ParticleID& first_jet_id = pid_here.getParticleID(first_jet,algo_id_here);
+      	  FloatVec params_here = first_jet_id.getParameters() ;
+	  
+      	  y12 = params_here[pid_here.getParameterIndex(algo_id_here, "y12")];
+      	  y23 = params_here[pid_here.getParameterIndex(algo_id_here, "y23")];
+      	  y34 = params_here[pid_here.getParameterIndex(algo_id_here, "y34")];
+      	  y45 = params_here[pid_here.getParameterIndex(algo_id_here, "y45")];
+      	  y56 = params_here[pid_here.getParameterIndex(algo_id_here, "y56")];
+      	  y67 = params_here[pid_here.getParameterIndex(algo_id_here, "y67")];
+      	  y78 = params_here[pid_here.getParameterIndex(algo_id_here, "y78")];
+      	  y89 = params_here[pid_here.getParameterIndex(algo_id_here, "y89")];
+      	}
+      } catch (UnknownAlgorithm &e) {
+      	std::cout << "Jet transition values not available" << std::endl;
+      }
+
+      // Loop over all permutations
+      while (next_permutation(numbers_6jets.begin(), numbers_6jets.end())) {
+
+	if (numbers_6jets.at(0) > numbers_6jets.at(1)){
+	  continue;
+	}
+	if (numbers_6jets.at(3) > numbers_6jets.at(4)){
+	  continue;
+	}
+
+	vector<TLorentzVector> jets_here_6jets;
+      
+	for (int i = 0; i < jets->getNumberOfElements(); i++) {
+	  jet_here.SetPxPyPzE(pfo_jets[numbers_6jets.at(i)].Px(),
+			      pfo_jets[numbers_6jets.at(i)].Py(),
+			      pfo_jets[numbers_6jets.at(i)].Pz(),
+			      pfo_jets[numbers_6jets.at(i)].E());
+	  jets_here_6jets.push_back(jet_here);
+	}
+
+	W_here = jets_here_6jets.at(0) + jets_here_6jets.at(1);
+	top_here = W_here + jets_here_6jets.at(2);
+	higgs_here = jets_here_6jets.at(3) + jets_here_6jets.at(4);
+	
+	Double_t sigma_W, sigma_t, sigma_h;
+	if (W_here.M() > mass_W){
+	  sigma_W = sigma_W_high;
+	}
+	else{
+	  sigma_W = sigma_W_low;
+	}
+	if (top_here.M() > mass_t){
+	  sigma_t = sigma_t_high;
+	}
+	else{
+	  sigma_t = sigma_t_low;
+	}
+	if (higgs_here.M() > mass_h){
+	  sigma_h = sigma_h_high;
+	}
+	else{
+	  sigma_h = sigma_h_low;
+	}
+
+	chi2_here = TMath::Power((W_here.M() - mass_W) / sigma_W,2)
+	  + TMath::Power((top_here.M() - mass_t) / sigma_t,2)
+	  + TMath::Power((higgs_here.M() - mass_h) / sigma_h,2);
+
+	if (chi2_here < chi2_min) {
+	  chi2_min = chi2_here;
+	  W_min = W_here;
+	  top_min = top_here;
+	  higgs_min = higgs_here;
+	  first_jet_from_higgs_min = jets_here_6jets.at(3);
+	  second_jet_from_higgs_min = jets_here_6jets.at(4);
+	  other_b = jets_here_6jets.at(5);
+	}
+
+      } // end loop over all permutations
+	
+      // WtH
+      jetmatch_chi2 = chi2_min;
+      W_qq_mass = W_min.M();
+      t_bqq_mass = top_min.M();
+      h_bb_mass = higgs_min.M();
+      
+      first_jet_from_higgs_min.Boost(-higgs_min.BoostVector()); // boost b jets into Higgs rest frame:
+      second_jet_from_higgs_min.Boost(-higgs_min.BoostVector());
+      Double_t dec_ang1 = first_jet_from_higgs_min.Angle(higgs_min.Vect());
+      Double_t dec_ang2 = second_jet_from_higgs_min.Angle(higgs_min.Vect());
+      if (dec_ang1 < dec_ang2){
+	dec_ang_min = dec_ang1;
+	dec_ang_max = dec_ang2;
+      }
+      else{
+	dec_ang_min = dec_ang2;
+	dec_ang_max = dec_ang1;
+      }	
+    } // end of if 6 jets
+    else{
+      jetmatch_chi2 = -1;
+      W_qq_mass = -1;
+      t_bqq_mass = -1;
+      h_bb_mass = -1;
+      dec_ang_min = -1;
+      dec_ang_max = -1;
+
+      btag_0 = -1;
+      btag_1 = -1;
+      btag_2 = -1;
+      btag_3 = -1;
+      btag_4 = -1;
+      btag_5 = -1;
+      
+      ctag_0 = -1;
+      ctag_1 = -1;
+      ctag_2 = -1;
+      ctag_3 = -1;
+      ctag_4 = -1;
+      ctag_5 = -1;
+      
+      y12 = -1;
+      y23 = -1;
+      y34 = -1;
+      y45 = -1;
+      y56 = -1;
+      y67 = -1;
+      y78 = -1;
+      y89 = -1;
+    }
+
+    // Neutrino
+    nu_pt = TMath::Sqrt(TMath::Power(sum_px,2) + TMath::Power(sum_py,2));
+    nu_px = -sum_px;
+    nu_py = -sum_py;
+    nu_pz = -sum_pz;
+    nu_e = TMath::Sqrt(TMath::Power(sum_px,2) + TMath::Power(sum_py,2)+ TMath::Power(sum_pz,2));
+
+    // Leptonic Wt
+    if (nLeptons == 1 && nJets == 6){
+      TLorentzVector this_lepton, this_neutrino, this_Wlnu, other_top;
+      this_lepton = TLorentzVector(l_px,l_py,l_pz,l_e);
+      this_neutrino = TLorentzVector(nu_px,nu_py,nu_pz,nu_e);
+      this_Wlnu = this_lepton + this_neutrino;
+      other_top = other_b + this_Wlnu;
+      
+      W_lnu_mass = this_Wlnu.M();
+      t_blnu_mass = other_top.M();
+
+      Double_t tHang1 = higgs_min.Angle(top_min.Vect());
+      Double_t tHang2 = higgs_min.Angle(other_top.Vect());
+      if (tHang1 < tHang2){
+	tHang_min = tHang1;
+	tHang_max = tHang2;
+      }
+      else{
+	tHang_min = tHang2;
+	tHang_max = tHang1;
+      }
+
+    }
+    else{
+      W_lnu_mass = -1;
+      t_blnu_mass = -1;
+      tHang_min = -1;
+      tHang_max = -1;
+    }
+
+    // Event
+    EVENT::LCCollection* pfos = event->getCollection("SelectedPandoraPFOCollection");
+    nPFOs = pfos->getNumberOfElements();
+
+    missing_pt = TMath::Sqrt(TMath::Power(sum_px,2) + TMath::Power(sum_py,2));
+
+    TObjArray *veclist_pfos = new TObjArray();
+    veclist_pfos->SetOwner(kTRUE);
+    for (int i = 0; i < pfos->getNumberOfElements(); i++) {
+      EVENT::ReconstructedParticle* pfoi = (EVENT::ReconstructedParticle*) pfos->getElementAt(i);
+      TVector3 vec3_tight(pfoi->getMomentum());
+      veclist_pfos->Add((TVector3*)vec3_tight.Clone());
+    }
+    CalculateEventShapeVariables(veclist_pfos, pfo_thrust, pfo_oblateness, pfo_sphericity, pfo_aplanarity);
+
+    tth_tree->Fill();
+  } // end of event loop
+
+  outfile.Write();
+  cout << "Made " << outfileName << " processed " << nEvt << " events" << endl;
+  return nEvt;
+}
+
+
+
+
+Int_t treeMaker_hadronic(std::string fileName, TString outfileName) {
+  // to make hadronic ntuples for the BDT
+  IO::LCReader* lcReader = IOIMPL::LCFactory::getInstance()->createLCReader() ;
+  lcReader->open( fileName ) ;
+  cout << "Processing " << fileName << endl;
+
+  TFile outfile( outfileName,"RECREATE");
+
+  TTree *tth_tree = new TTree("tth_tree","");
+
+  // Leptons
+  Int_t nLeptons, nIsoleps, nTaus;
+
+  tth_tree->Branch("nLeptons",&nLeptons,"nLeptons/I");
+  tth_tree->Branch("nIsoleps",&nIsoleps,"nIsoleps/I");
+  tth_tree->Branch("nTaus",&nTaus,"nTaus/I");
+
+  // Jets
+  Int_t nJets;
+  Double_t Evis_jets;
+  Double_t jetE_0,jetE_1,jetE_2,jetE_3,jetE_4,jetE_5,jetE_6,jetE_7;
+  Double_t jetT_0,jetT_1,jetT_2,jetT_3,jetT_4,jetT_5,jetT_6,jetT_7;
+  Double_t btag_0,btag_1,btag_2,btag_3,btag_4,btag_5;
+  Double_t ctag_0,ctag_1,ctag_2,ctag_3,ctag_4,ctag_5;
+  Double_t y12,y23,y34,y45,y56,y67,y78,y89;
+
+  tth_tree->Branch("nJets",&nJets,"nJets/I");
+  tth_tree->Branch("Evis_jets",&Evis_jets,"Evis_jets/D");
+
+  tth_tree->Branch("jetE_0",&jetE_0,"jetE_0/D");
+  tth_tree->Branch("jetE_1",&jetE_1,"jetE_1/D");
+  tth_tree->Branch("jetE_2",&jetE_2,"jetE_2/D");
+  tth_tree->Branch("jetE_3",&jetE_3,"jetE_3/D");
+  tth_tree->Branch("jetE_4",&jetE_4,"jetE_4/D");
+  tth_tree->Branch("jetE_5",&jetE_5,"jetE_5/D");
+  tth_tree->Branch("jetE_6",&jetE_6,"jetE_6/D");
+  tth_tree->Branch("jetE_7",&jetE_7,"jetE_7/D");
+
+  tth_tree->Branch("jetT_0",&jetT_0,"jetT_0/D");
+  tth_tree->Branch("jetT_1",&jetT_1,"jetT_1/D");
+  tth_tree->Branch("jetT_2",&jetT_2,"jetT_2/D");
+  tth_tree->Branch("jetT_3",&jetT_3,"jetT_3/D");
+  tth_tree->Branch("jetT_4",&jetT_4,"jetT_4/D");
+  tth_tree->Branch("jetT_5",&jetT_5,"jetT_5/D");
+  tth_tree->Branch("jetT_6",&jetT_6,"jetT_6/D");
+  tth_tree->Branch("jetT_7",&jetT_7,"jetT_7/D");
+
+  tth_tree->Branch("btag_0",&btag_0,"btag_0/D");
+  tth_tree->Branch("btag_1",&btag_1,"btag_1/D");
+  tth_tree->Branch("btag_2",&btag_2,"btag_2/D");
+  tth_tree->Branch("btag_3",&btag_3,"btag_3/D");
+  tth_tree->Branch("btag_4",&btag_4,"btag_4/D");
+  tth_tree->Branch("btag_5",&btag_5,"btag_5/D");
+
+  tth_tree->Branch("ctag_0",&ctag_0,"ctag_0/D");
+  tth_tree->Branch("ctag_1",&ctag_1,"ctag_1/D");
+  tth_tree->Branch("ctag_2",&ctag_2,"ctag_2/D");
+  tth_tree->Branch("ctag_3",&ctag_3,"ctag_3/D");
+  tth_tree->Branch("ctag_4",&ctag_4,"ctag_4/D");
+  tth_tree->Branch("ctag_5",&ctag_5,"ctag_5/D");
+
+  tth_tree->Branch("y12",&y12,"y12/D");
+  tth_tree->Branch("y23",&y23,"y23/D");
+  tth_tree->Branch("y34",&y34,"y34/D");
+  tth_tree->Branch("y45",&y45,"y45/D");
+  tth_tree->Branch("y56",&y56,"y56/D");
+  tth_tree->Branch("y67",&y67,"y67/D");
+  tth_tree->Branch("y78",&y78,"y78/D");
+  tth_tree->Branch("y89",&y89,"y89/D");
+
+  // WtH
+  Double_t W_qq1_mass, W_qq2_mass, t_bqq1_mass, t_bqq2_mass;
+  Double_t h_bb_mass, tHang_min, tHang_max, dec_ang_min, dec_ang_max;
+  Double_t jetmatch_chi2;
+
+  tth_tree->Branch("W_qq1_mass",&W_qq1_mass,"W_qq1_mass/D");
+  tth_tree->Branch("W_qq2_mass",&W_qq2_mass,"W_qq2_mass/D");
+  tth_tree->Branch("t_bqq1_mass",&t_bqq1_mass,"t_bqq1_mass/D");
+  tth_tree->Branch("t_bqq2_mass",&t_bqq2_mass,"t_bqq2_mass/D");
+  tth_tree->Branch("h_bb_mass",&h_bb_mass,"h_bb_mass/D");
+  tth_tree->Branch("tHang_min",&tHang_min,"tHang_min/D");
+  tth_tree->Branch("tHang_max",&tHang_max,"tHang_max/D");
+  tth_tree->Branch("dec_ang_min",&dec_ang_min,"dec_ang_min/D");
+  tth_tree->Branch("dec_ang_max",&dec_ang_max,"dec_ang_max/D");
+  tth_tree->Branch("jetmatch_chi2",&jetmatch_chi2,"jetmatch_chi2/D");
+
+  // Event
+  Int_t nPFOs;
+  Double_t missing_pt;
+  Double_t pfo_thrust, pfo_oblateness, pfo_sphericity, pfo_aplanarity;
+
+  tth_tree->Branch("nPFOs",&nPFOs,"nPFOs/I");
+  tth_tree->Branch("missing_pt",&missing_pt,"missing_pt/D");
+  tth_tree->Branch("pfo_thrust",&pfo_thrust,"pfo_thrust/D");
+  tth_tree->Branch("pfo_oblateness",&pfo_oblateness,"pfo_oblateness/D");
+  tth_tree->Branch("pfo_sphericity",&pfo_sphericity,"pfo_sphericity/D");
+  tth_tree->Branch("pfo_aplanarity",&pfo_aplanarity,"pfo_aplanarity/D");
+
+  const Double_t mass_W = 79.4;
+  const Double_t mass_t = 172.2;
+  const Double_t mass_h = 119.8;
+  
+  const Double_t sigma_W_low = 6.0;
+  const Double_t sigma_W_high = 6.5;
+  const Double_t sigma_t_low = 13.0;
+  const Double_t sigma_t_high = 10.0;
+  const Double_t sigma_h_low = 12.5;
+  const Double_t sigma_h_high = 7.5;
+
+  Int_t nEvt = 0;
+  EVENT::LCEvent* event = 0;
+
+  while( (event = lcReader->readNextEvent()) != 0 ) {
+    nEvt++;
+
+    Double_t sum_px = 0.;
+    Double_t sum_py = 0.;
+    Double_t sum_pz = 0.;
+    Double_t sum_e = 0.;
+    Double_t jet_sum_e = 0.;
+    Double_t btag_vals, ctag_vals;
+
+    std::vector<Double_t> all_total_masses;
+
+    // Leptons
+    EVENT::LCCollection* isoleps = event->getCollection("Isolep_Selected");
+    EVENT::LCCollection* taus = event->getCollection("Taus"); 
+
+    nLeptons = isoleps->getNumberOfElements() + taus->getNumberOfElements();
+    nIsoleps = isoleps->getNumberOfElements();
+    nTaus = taus->getNumberOfElements(); 
+
+    // Jets
+    EVENT::LCCollection* jets = event->getCollection("RefinedJets_8jets"); // for full analysis
+    nJets = jets->getNumberOfElements();
+
+    vector<TLorentzVector> pfo_jets;
+    for (int i = 0; i < jets->getNumberOfElements(); i++) {
+      EVENT::ReconstructedParticle* jeti = (EVENT::ReconstructedParticle*) jets->getElementAt(i);
+      TLorentzVector* mi = new TLorentzVector(jeti->getMomentum());
+      pfo_jets.push_back(TLorentzVector(mi->Px(), mi->Py(), mi->Pz(), mi->E()));
+      sum_px += mi->Px();
+      sum_py += mi->Py();
+      sum_pz += mi->Pz();
+      sum_e += mi->E();
+      jet_sum_e += mi->E();
+    }
+    Evis_jets = jet_sum_e;
+
+    vector<int> numbers_8jets;
+    numbers_8jets.push_back(0);
+    numbers_8jets.push_back(1);
+    numbers_8jets.push_back(2);
+    numbers_8jets.push_back(3);
+    numbers_8jets.push_back(4);
+    numbers_8jets.push_back(5);
+    numbers_8jets.push_back(6);
+    numbers_8jets.push_back(7);
+
+    Double_t chi2_min = 999999;
+
+    TLorentzVector W1_min;
+    TLorentzVector W2_min;
+    TLorentzVector top1_min;
+    TLorentzVector top2_min;
+    TLorentzVector higgs_min;
+    TLorentzVector first_jet_from_higgs_min;
+    TLorentzVector second_jet_from_higgs_min;
+
+    Double_t chi2_here;
+    TLorentzVector W1_here, W2_here, top1_here, top2_here, higgs_here;
+    TLorentzVector jet_here;
+
+    if (jets->getNumberOfElements() == 8){
+
+      vector<Double_t>jet_energies;
+      vector<Double_t>jet_thetas;
+
+      UTIL::PIDHandler pidh ( jets ) ;
+      const EVENT::LCIntVec& algolist =  (EVENT::LCIntVec&) pidh.getAlgorithmIDs() ;
+      int algo = -99999;
+      if ( algolist.size() != 0 ) algo = pidh.getAlgorithmID( "lcfiplus" ) ;
+	
+      vector<pair<Double_t,Double_t> >os;
+
+      for(int i = 0; i < jets->getNumberOfElements(); i++){
+      	ReconstructedParticle* jet = dynamic_cast< ReconstructedParticle* >( jets->getElementAt(i) );
+
+	jet_energies.push_back(jet->getEnergy());
+	if ((TLorentzVector(jet->getMomentum())).Theta() < 1.5707963267948966){
+	  jet_thetas.push_back((TLorentzVector(jet->getMomentum())).Theta());
+	}
+	else{
+	  jet_thetas.push_back(3.141592653589793 - (TLorentzVector(jet->getMomentum())).Theta());
+	}
+
+      	if ( algolist.size() != 0 ) {
+      	  const ParticleID& jetID = pidh.getParticleID( jet , algo ) ;
+      	  FloatVec params = jetID.getParameters() ;
+      	  btag_vals = params[pidh.getParameterIndex( algo , "BTag"  )];
+      	  ctag_vals = params[pidh.getParameterIndex( algo , "CTag"  )];
+      	  //cout << "btag: " << btag_vals << " ctag: " << ctag_vals << endl;
+      	  os.push_back(pair<Double_t,Double_t>(btag_vals, ctag_vals));
+      	}
+      }
+
+      sort(jet_energies.begin(),jet_energies.end());
+      jetE_0 = jet_energies.at(0);
+      jetE_1 = jet_energies.at(1);
+      jetE_2 = jet_energies.at(2);
+      jetE_3 = jet_energies.at(3);
+      jetE_4 = jet_energies.at(4);
+      jetE_5 = jet_energies.at(5);
+      jetE_6 = jet_energies.at(6);
+      jetE_7 = jet_energies.at(7);
+
+      sort(jet_thetas.begin(),jet_thetas.end());
+      jetT_0 = jet_thetas.at(0);
+      jetT_1 = jet_thetas.at(1);
+      jetT_2 = jet_thetas.at(2);
+      jetT_3 = jet_thetas.at(3);
+      jetT_4 = jet_thetas.at(4);
+      jetT_5 = jet_thetas.at(5);
+      jetT_6 = jet_thetas.at(6);
+      jetT_7 = jet_thetas.at(7);
+
+      sort(os.begin(),os.end(),compare);
+      // for(int i=0;i<os.size();i++)
+      //   cout << os.at(i).first << " " << os.at(i).second << endl;
+
+      btag_0 = os.at(0).first;
+      btag_1 = os.at(1).first;
+      btag_2 = os.at(2).first;
+      btag_3 = os.at(3).first;
+      btag_4 = os.at(4).first;
+      btag_5 = os.at(5).first;
+
+      ctag_0 = os.at(0).second;
+      ctag_1 = os.at(1).second;
+      ctag_2 = os.at(2).second;
+      ctag_3 = os.at(3).second;
+      ctag_4 = os.at(4).second;
+      ctag_5 = os.at(5).second;
+      
+      UTIL::PIDHandler pid_here(jets);
+      const IntVec& algo_ids_here = pid_here.getAlgorithmIDs();
+      int algo_id_here = -99999;
+      try {
+      	if (algo_ids_here.size() != 0) algo_id_here = pid_here.getAlgorithmID("yth");
+      	if (jets->getNumberOfElements() > 0) {
+      	  ReconstructedParticle* first_jet = dynamic_cast<ReconstructedParticle*>(jets->getElementAt(0));
+      	  const ParticleID& first_jet_id = pid_here.getParticleID(first_jet,algo_id_here);
+      	  FloatVec params_here = first_jet_id.getParameters() ;
+	  
+      	  y12 = params_here[pid_here.getParameterIndex(algo_id_here, "y12")];
+      	  y23 = params_here[pid_here.getParameterIndex(algo_id_here, "y23")];
+      	  y34 = params_here[pid_here.getParameterIndex(algo_id_here, "y34")];
+      	  y45 = params_here[pid_here.getParameterIndex(algo_id_here, "y45")];
+      	  y56 = params_here[pid_here.getParameterIndex(algo_id_here, "y56")];
+      	  y67 = params_here[pid_here.getParameterIndex(algo_id_here, "y67")];
+      	  y78 = params_here[pid_here.getParameterIndex(algo_id_here, "y78")];
+      	  y89 = params_here[pid_here.getParameterIndex(algo_id_here, "y89")];
+      	}
+      } catch (UnknownAlgorithm &e) {
+      	std::cout << "Jet transition values not available" << std::endl;
+      }
+
+      // Loop over all permutations
+      while (next_permutation(numbers_8jets.begin(), numbers_8jets.end())) {
+
+	if (numbers_8jets.at(0) > numbers_8jets.at(1)){
+	  continue;
+	}
+	if (numbers_8jets.at(3) > numbers_8jets.at(4)){
+	  continue;
+	}
+	if (numbers_8jets.at(6) > numbers_8jets.at(7)){
+	  continue;
+	}
+	if (numbers_8jets.at(2) > numbers_8jets.at(5)){
+	  continue;
+	}
+
+	vector<TLorentzVector> jets_here_8jets;
+      
+	for (int i = 0; i < jets->getNumberOfElements(); i++) {
+	  jet_here.SetPxPyPzE(pfo_jets[numbers_8jets.at(i)].Px(),
+			      pfo_jets[numbers_8jets.at(i)].Py(),
+			      pfo_jets[numbers_8jets.at(i)].Pz(),
+			      pfo_jets[numbers_8jets.at(i)].E());
+	  jets_here_8jets.push_back(jet_here);
+	}
+
+	W1_here = jets_here_8jets.at(0) + jets_here_8jets.at(1);
+	W2_here = jets_here_8jets.at(3) + jets_here_8jets.at(4);
+	top1_here = W1_here + jets_here_8jets.at(2);
+	top2_here = W2_here + jets_here_8jets.at(5);
+	higgs_here = jets_here_8jets.at(6) + jets_here_8jets.at(7);
+	
+	Double_t sigma_W1, sigma_W2, sigma_t1, sigma_t2, sigma_h;
+	if (W1_here.M() > mass_W){
+	  sigma_W1 = sigma_W_high;
+	}
+	else{
+	  sigma_W1 = sigma_W_low;
+	}
+	if (W2_here.M() > mass_W){
+	  sigma_W2 = sigma_W_high;
+	}
+	else{
+	  sigma_W2 = sigma_W_low;
+	}
+	if (top1_here.M() > mass_t){
+	  sigma_t1 = sigma_t_high;
+	}
+	else{
+	  sigma_t1 = sigma_t_low;
+	}
+	if (top2_here.M() > mass_t){
+	  sigma_t2 = sigma_t_high;
+	}
+	else{
+	  sigma_t2 = sigma_t_low;
+	}
+	if (higgs_here.M() > mass_h){
+	  sigma_h = sigma_h_high;
+	}
+	else{
+	  sigma_h = sigma_h_low;
+	}
+
+	chi2_here = TMath::Power((W1_here.M() - mass_W) / sigma_W1,2)
+	  + TMath::Power((W2_here.M() - mass_W) / sigma_W2,2)
+	  + TMath::Power((top1_here.M() - mass_t) / sigma_t1,2)
+	  + TMath::Power((top2_here.M() - mass_t) / sigma_t2,2)
+	  + TMath::Power((higgs_here.M() - mass_h) / sigma_h,2);
+
+	if (chi2_here < chi2_min) {
+	  chi2_min = chi2_here;
+	  W1_min = W1_here;
+	  W2_min = W2_here;
+	  top1_min = top1_here;
+	  top2_min = top2_here;
+	  higgs_min = higgs_here;
+	  first_jet_from_higgs_min = jets_here_8jets.at(6);
+	  second_jet_from_higgs_min = jets_here_8jets.at(7);
+	}
+	
+      } // end loop over all permutations
+	
+      // WtH
+      jetmatch_chi2 = chi2_min;
+      W_qq1_mass = W1_min.M();
+      W_qq2_mass = W2_min.M();
+      t_bqq1_mass = top1_min.M();
+      t_bqq2_mass = top2_min.M();
+      h_bb_mass = higgs_min.M();
+      
+      first_jet_from_higgs_min.Boost(-higgs_min.BoostVector()); // boost b jets into Higgs rest frame:
+      second_jet_from_higgs_min.Boost(-higgs_min.BoostVector());
+      Double_t dec_ang1 = first_jet_from_higgs_min.Angle(higgs_min.Vect());
+      Double_t dec_ang2 = second_jet_from_higgs_min.Angle(higgs_min.Vect());
+      if (dec_ang1 < dec_ang2){
+	dec_ang_min = dec_ang1;
+	dec_ang_max = dec_ang2;
+      }
+      else{
+	dec_ang_min = dec_ang2;
+	dec_ang_max = dec_ang1;
+      }	
+
+      Double_t tHang1 = higgs_min.Angle(top1_min.Vect());
+      Double_t tHang2 = higgs_min.Angle(top2_min.Vect());
+      if (tHang1 < tHang2){
+	tHang_min = tHang1;
+	tHang_max = tHang2;
+      }
+      else{
+	tHang_min = tHang2;
+	tHang_max = tHang1;
+      }
+
+    } // end of if 8 jets
+    else{
+      jetmatch_chi2 = -1;
+      W_qq1_mass = -1;
+      W_qq2_mass = -1;
+      t_bqq1_mass = -1;
+      t_bqq2_mass = -1;
+      h_bb_mass = -1;
+      dec_ang_min = -1;
+      dec_ang_max = -1;
+      tHang_min = -1;
+      tHang_max = -1;
+
+      jetE_0 = -1;
+      jetE_1 = -1;
+      jetE_2 = -1;
+      jetE_3 = -1;
+      jetE_4 = -1;
+      jetE_5 = -1;
+      jetE_6 = -1;
+      jetE_7 = -1;
+
+      jetT_0 = -1;
+      jetT_1 = -1;
+      jetT_2 = -1;
+      jetT_3 = -1;
+      jetT_4 = -1;
+      jetT_5 = -1;
+      jetT_6 = -1;
+      jetT_7 = -1;
+
+      btag_0 = -1;
+      btag_1 = -1;
+      btag_2 = -1;
+      btag_3 = -1;
+      btag_4 = -1;
+      btag_5 = -1;
+      
+      ctag_0 = -1;
+      ctag_1 = -1;
+      ctag_2 = -1;
+      ctag_3 = -1;
+      ctag_4 = -1;
+      ctag_5 = -1;
+      
+      y12 = -1;
+      y23 = -1;
+      y34 = -1;
+      y45 = -1;
+      y56 = -1;
+      y67 = -1;
+      y78 = -1;
+      y89 = -1;
+    }
+
+    // Event
+    EVENT::LCCollection* pfos = event->getCollection("SelectedPandoraPFOCollection");
+    nPFOs = pfos->getNumberOfElements();
+
+    missing_pt = TMath::Sqrt(TMath::Power(sum_px,2) + TMath::Power(sum_py,2));
+
+    TObjArray *veclist_pfos = new TObjArray();
+    veclist_pfos->SetOwner(kTRUE);
+    for (int i = 0; i < pfos->getNumberOfElements(); i++) {
+      EVENT::ReconstructedParticle* pfoi = (EVENT::ReconstructedParticle*) pfos->getElementAt(i);
+      TVector3 vec3_tight(pfoi->getMomentum());
+      veclist_pfos->Add((TVector3*)vec3_tight.Clone());
+    }
+    CalculateEventShapeVariables(veclist_pfos, pfo_thrust, pfo_oblateness, pfo_sphericity, pfo_aplanarity);
+
+    tth_tree->Fill();
+
+  } // end of event loop
+
+  outfile.Write();
+  cout << "Made " << outfileName << " processed " << nEvt << " events" << endl;
+  return nEvt;
+}
+
+
+// copied from MCMatching
+EVENT::MCParticle* getGeneratedLepton(EVENT::LCEvent* event){
+  // to return the generated signal lepton status 3
+  EVENT::MCParticle* pointer_to_gen_lepton = 0;
+
+  EVENT::LCCollection* mcp = event->getCollection("MCParticle");
+  for (int i = 0; i < mcp->getNumberOfElements(); i++){
+    EVENT::MCParticle* mcpi = (EVENT::MCParticle*) mcp->getElementAt(i);
+    if (mcpi->getGeneratorStatus() == 3){
+      if (abs(mcpi->getPDG()) == 11 || abs(mcpi->getPDG()) == 13 || abs(mcpi->getPDG()) == 15) {
+        if(mcpi->getParents().size() > 0){
+          if (abs(mcpi->getParents()[0]->getPDG()) == 24){
+            pointer_to_gen_lepton = mcpi;
+          }
+        }
+      }
+    }
+  }
+  //cout << "got generated lepton " << pointer_to_gen_lepton->getPDG() << endl;
+
+  return pointer_to_gen_lepton;
+}
+
+EVENT::MCParticle* getMCLepton(EVENT::LCEvent* event){
+  // to return the mc signal lepton
+  EVENT::MCParticle* pointer_to_mc_lepton = 0;
+
+  EVENT::LCCollection* mcp = event->getCollection("MCParticle");
+  for (int i = 0; i < mcp->getNumberOfElements(); i++){
+    EVENT::MCParticle* mcpi = (EVENT::MCParticle*) mcp->getElementAt(i);
+    if ((abs(mcpi->getPDG()) == 11) || (abs(mcpi->getPDG()) == 13)){
+      if (mcpi->getGeneratorStatus() == 1){
+        if (mcpi->getParents().size() == 1){
+          if (abs(mcpi->getParents()[0]->getPDG()) == 24){
+            pointer_to_mc_lepton = mcpi;
+          }
+        }
+      }
+    }
+    if (abs(mcpi->getPDG()) == 15){
+      if (mcpi->getParents().size() > 0){
+        if (mcpi->getParents()[0]->getParents().size() > 0){
+          if (abs(mcpi->getParents()[0]->getPDG()) == 24 && (abs(mcpi->getParents()[0]->getParents()[0]->getPDG()) == 94 || abs(mcpi->getParents()[0]->getParents()[0]->getPDG()) == 15 || abs(mcpi->getParents()[0]->getParents()[0]->getPDG()) == 16)){
+            if (mcpi->getDaughters().size() > 0){
+              pointer_to_mc_lepton = mcpi;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  /*
+  if (pointer_to_mc_lepton){
+    cout << "got mc lepton " << pointer_to_mc_lepton->getPDG() << endl;
+  }
+  else{
+    cout << "no MC lepton" << endl;
+  }
+  */
+  return pointer_to_mc_lepton;
+}
+
+EVENT::ReconstructedParticle* getReconstructedLepton(EVENT::LCEvent* event){
+  // to return the reconstructed e/mu signal lepton
+  // if a tau was generated, return nothing
+
+  EVENT::LCRelation* link_to_rec_lepton = 0;
+  EVENT::MCParticle* pointer_to_mc_lepton = 0;
+  EVENT::ReconstructedParticle* pointer_to_rec_lepton = 0;
+  EVENT::LCCollection* links = event->getCollection("RecoMCTruthLink");
+
+  pointer_to_mc_lepton = getMCLepton(event);
+  
+  for (int i = 0; i < links->getNumberOfElements(); i++){
+    EVENT::LCRelation* linki = (EVENT::LCRelation*) links->getElementAt(i);
+    EVENT::MCParticle* mcpi = (EVENT::MCParticle*) linki->getTo();
+    if (pointer_to_mc_lepton == mcpi){
+      link_to_rec_lepton = linki;
+    }
+  }
+
+  // follow the link
+  // if no link, 0 returned
+  if (link_to_rec_lepton){
+    EVENT::ReconstructedParticle* rpi = (EVENT::ReconstructedParticle*) link_to_rec_lepton->getFrom();
+    pointer_to_rec_lepton = rpi;
+    //cout << "got linked rec lepton " << rpi->getType() << endl;
+  }
+
+  return pointer_to_rec_lepton;
+
+}
+
+bool compare(const pair<Double_t,Double_t>&i, const pair<Double_t,Double_t>&j){
+  return i.first > j.first;
+}
+
+void CalculateEventShapeVariables(TObjArray* e, Double_t &event_thrust, Double_t &event_oblateness, Double_t &event_sphericity , Double_t &event_aplanarity ) {	
+
+  const Int_t m_maxpart = 1000;
+
+  // Parameters
+  // ==========
+
+  // Double_t m_dSphMomPower = 2.0;
+  // PARU(41): Power of momentum dependence in sphericity finder.
+
+  Double_t m_dDeltaThPower = 0;
+  // PARU(42): Power of momentum dependence in thrust finder.   
+
+  Int_t m_iFast = 4;
+  // MSTU(44): # of initial fastest particles choosen to start search.
+
+  Double_t m_dConv = 0.0001;
+  // PARU(48): Convergence criteria for axis maximization.
+
+  Int_t m_iGood = 2;
+  // MSTU(45): # different starting configurations that must
+  // converge before axis is accepted as correct.
+
+  // Variables
+  // =========
+
+  TMatrixD m_dAxes;
+  m_dAxes.ResizeTo(4,4);
+
+  TRandom m_random;
+
+  Double_t m_dThrust[4];
+  Double_t m_dOblateness;
+
+  //To make this look like normal physics notation the
+  //zeroth element of each array, mom[i][0], will be ignored
+  //and operations will be on elements 1,2,3...
+  TMatrixD mom(m_maxpart,6);
+  Double_t tmax = 0;
+  Double_t phi = 0.;
+  Double_t the = 0.;
+  Double_t sgn;
+  TMatrixD fast(m_iFast + 1,6);
+  TMatrixD work(11,6);
+  Double_t tdi[] = {0.,0.,0.,0.};
+  Double_t tds;
+  Double_t tpr[] = {0.,0.,0.,0.};
+  Double_t thp;
+  Double_t thps;
+  TMatrixD temp(3,5);
+  Int_t np = 0;
+  Int_t numElements = e->GetEntries();
+  TObject* o;
+  for(Int_t elem=0;elem<numElements;elem++) {
+    o = e->At(elem);
+    
+    if (np >= m_maxpart) { 
+      printf("Too many particles input to LCDEventShape");
+      return;
+    }
+
+    TString nam(o->IsA()->GetName());
+    if (nam.Contains("TVector3")) {
+      mom(np,1) = ((TVector3 *) o)->X();
+      mom(np,2) = ((TVector3 *) o)->Y();
+      mom(np,3) = ((TVector3 *) o)->Z();
+      mom(np,4) = TMath::Sqrt(mom(np,1)*mom(np,1) + mom(np,2)*mom(np,2)
+			      + mom(np,3)*mom(np,3));
+    } else if (nam.Contains("TLorentzVector")) {
+      mom(np,1) = ((TLorentzVector *) o)->X();
+      mom(np,2) = ((TLorentzVector *) o)->Y();
+      mom(np,3) = ((TLorentzVector *) o)->Z();
+      mom(np,4) = TMath::Sqrt(mom(np,1)*mom(np,1) + mom(np,2)*mom(np,2)
+			      + mom(np,3)*mom(np,3));
+    } else {
+      printf("LCDEventShape::SetEvent input is not a TVector3 or a TLorentzVector\n");
+      continue;
+    }
+
+    if ( TMath::Abs( m_dDeltaThPower ) <= 0.001 ) {
+      mom(np,5) = 1.0;
+    } else {
+      mom(np,5) = TMath::Power(mom(np,4),m_dDeltaThPower);
+    }
+    tmax = tmax + mom(np,4)*mom(np,5);
+    np++;
+  }
+  if ( np < 2 ) {
+    m_dThrust[1] = -1.0;
+    m_dOblateness = -1.0;
+    return;
+  }
+  // for pass = 1: find thrust axis.
+  // for pass = 2: find major axis.
+  for ( Int_t pass=1; pass < 3; pass++) {
+    if ( pass == 2 ) {
+      phi = ulAngle(m_dAxes(1,1), m_dAxes(1,2));
+      ludbrb( &mom, 0, -phi, 0., 0., 0. );
+      for ( Int_t i = 0; i < 3; i++ ) {
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  temp(i,j) = m_dAxes(i+1,j);
+	}
+	temp(i,4) = 0;
+      }
+      ludbrb(&temp,0.,-phi,0.,0.,0.);
+      for ( Int_t ib = 0; ib < 3; ib++ ) {
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  m_dAxes(ib+1,j) = temp(ib,j);
+	}
+      }
+      the = ulAngle( m_dAxes(1,3), m_dAxes(1,1) );
+      ludbrb( &mom, -the, 0., 0., 0., 0. );
+      for ( Int_t ic = 0; ic < 3; ic++ ) {
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  temp(ic,j) = m_dAxes(ic+1,j);
+	}
+	temp(ic,4) = 0;
+      }
+      ludbrb(&temp,-the,0.,0.,0.,0.);
+      for ( Int_t id = 0; id < 3; id++ ) {	
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  m_dAxes(id+1,j) = temp(id,j);
+	}
+      }
+    }
+    for ( Int_t ifas = 0; ifas < m_iFast + 1 ; ifas++ ) {
+      fast(ifas,4) = 0.;
+    }
+    // Find the m_iFast highest momentum particles and
+    // put the highest in fast[0], next in fast[1],....fast[m_iFast-1].
+    // fast[m_iFast] is just a workspace.
+    for ( Int_t i = 0; i < np; i++ ) {
+      if ( pass == 2 ) {
+	mom(i,4) = TMath::Sqrt( mom(i,1)*mom(i,1) 
+				+ mom(i,2)*mom(i,2) ); 
+      }
+      for ( Int_t ifas = m_iFast - 1; ifas > -1; ifas-- ) {
+	if ( mom(i,4) > fast(ifas,4) ) {
+	  for ( Int_t j = 1; j < 6; j++ ) {
+	    fast(ifas+1,j) = fast(ifas,j);
+	    if ( ifas == 0 ) fast(ifas,j) = mom(i,j);	    
+	  }
+	} else {
+	  for ( Int_t j = 1; j < 6; j++ ) {
+	    fast(ifas+1,j) = mom(i,j);
+	  }
+	  break;
+	}
+      }
+    }
+    // Find axis with highest thrust (case 1)/ highest major (case 2).
+    for ( Int_t ie = 0; ie < work.GetNrows(); ie++ ) {
+      work(ie,4) = 0.;
+    }
+    Int_t p = TMath::Min( m_iFast, np ) - 1;
+    // Don't trust Math.pow to give right answer always.
+    // Want nc = 2**p.
+    Int_t nc = iPow(2,p); 
+    for ( Int_t n = 0; n < nc; n++ ) {
+      for ( Int_t j = 1; j < 4; j++ ) {
+	tdi[j] = 0.;
+      }
+      for ( Int_t i = 0; i < TMath::Min(m_iFast,n); i++ ) {
+	sgn = fast(i,5);
+	if (iPow(2,(i+1))*((n+iPow(2,i))/iPow(2,(i+1))) >= i+1){
+	  sgn = -sgn;
+	}
+	for ( Int_t j = 1; j < 5-pass; j++ ) {
+	  tdi[j] = tdi[j] + sgn*fast(i,j);
+	}
+      }
+      tds = tdi[1]*tdi[1] + tdi[2]*tdi[2] + tdi[3]*tdi[3];
+      for ( Int_t iw = TMath::Min(n,9); iw > -1; iw--) {
+	if( tds > work(iw,4) ) {
+	  for ( Int_t j = 1; j < 5; j++ ) {
+	    work(iw+1,j) = work(iw,j);
+	    if ( iw == 0 ) {
+	      if ( j < 4 ) {
+		work(iw,j) = tdi[j];
+	      } else {
+		work(iw,j) = tds;
+	      }
+	    }
+	  }
+	} else {
+	  for ( Int_t j = 1; j < 4; j++ ) {
+	    work(iw+1,j) = tdi[j];
+	  }
+	  work(iw+1,4) = tds;
+	}
+      }
+    }
+    // Iterate direction of axis until stable maximum.
+    m_dThrust[pass] = 0;
+    thp = -99999.;
+    Int_t nagree = 0;
+    for ( Int_t iw = 0; 
+	  iw < TMath::Min(nc,10) && nagree < m_iGood; iw++ ){
+      thp = 0.;
+      thps = -99999.;
+      while ( thp > thps + m_dConv ) {
+	thps = thp;
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  if ( thp <= 1E-10 ) {
+	    tdi[j] = work(iw,j);
+	  } else {
+	    tdi[j] = tpr[j];
+	    tpr[j] = 0;
+	  }
+	}
+	for ( Int_t i = 0; i < np; i++ ) {
+	  sgn = sign(mom(i,5), 
+		     tdi[1]*mom(i,1) + 
+		     tdi[2]*mom(i,2) + 
+		     tdi[3]*mom(i,3));
+	  for ( Int_t j = 1; j < 5 - pass; j++ ){
+	    tpr[j] = tpr[j] + sgn*mom(i,j);
+	  }
+	}
+	thp = TMath::Sqrt(tpr[1]*tpr[1] 
+			  + tpr[2]*tpr[2] 
+			  + tpr[3]*tpr[3])/tmax;
+      }
+      // Save good axis. Try new initial axis until enough
+      // tries agree.
+      if ( thp < m_dThrust[pass] - m_dConv ) {
+	break;
+      }
+      if ( thp > m_dThrust[pass] + m_dConv ) {
+	nagree = 0;
+	sgn = iPow( -1, (Int_t)TMath::Nint(m_random.Rndm()) );
+	for ( Int_t j = 1; j < 4; j++ ) {
+	  m_dAxes(pass,j) = sgn*tpr[j]/(tmax*thp);
+	}
+	m_dThrust[pass] = thp;
+      }
+      nagree = nagree + 1;
+    }
+  }
+  // Find minor axis and value by orthogonality.
+  sgn = iPow( -1, (Int_t)TMath::Nint(m_random.Rndm()));
+  m_dAxes(3,1) = -sgn*m_dAxes(2,2);
+  m_dAxes(3,2) = sgn*m_dAxes(2,1);
+  m_dAxes(3,3) = 0.;
+  thp = 0.;
+  for ( Int_t i = 0; i < np; i++ ) {
+    thp += mom(i,5)*TMath::Abs(m_dAxes(3,1)*mom(i,1) + 
+			       m_dAxes(3,2)*mom(i,2));
+  }
+  m_dThrust[3] = thp/tmax;
+  // Rotate back to original coordinate system.
+  for ( Int_t i6 = 0; i6 < 3; i6++ ) {
+    for ( Int_t j = 1; j < 4; j++ ) {
+      temp(i6,j) = m_dAxes(i6+1,j);
+    }
+    temp(i6,4) = 0;
+  }
+  ludbrb(&temp,the,phi,0.,0.,0.);
+  for ( Int_t i7 = 0; i7 < 3; i7++ ) {
+    for ( Int_t j = 1; j < 4; j++ ) {
+      m_dAxes(i7+1,j) = temp(i7,j);
+    }
+  }
+  m_dOblateness = m_dThrust[2] - m_dThrust[3];
+
+  event_thrust = m_dThrust[1];
+  event_oblateness = m_dOblateness;
+  
+
+  // sphericity and aplanarity
+  double Pduzi; 
+  float sp[3][3];
+  float norm=0.0;
+  double dvojka=2.0;
+    
+  for(int i=0;i<3;i++){
+    for (int j=0;j<3;j++)       
+      {     
+	sp[j][i]=0.0;
+      }
+  }
+  
+  for(Int_t elem=0;elem<numElements;elem++) {
+    o = e->At(elem);
+    double pp [] = {((TVector3 *) o)->X(),((TVector3 *) o)->Y(),((TVector3 *) o)->Z()};
+
+    Pduzi=sqrt(pow(pp[0],dvojka)+pow(pp[1],dvojka)+pow(pp[2],dvojka));
+      
+    norm=norm+pow(Pduzi,(double) 2.0); // _r: exponent in sphericity tensor use 2.0 for classical 1.0 for C,D
+    for(int j=0;j<3;j++){
+      for(int i=0;i<3;i++){
+	sp[j][i]=sp[j][i]+pp[i]*pp[j]*pow(Pduzi,(2.0-dvojka));
+      }	
+    }    
+  }
+  
+  for(int j=0;j<3;j++){
+    for(int i=0;i<3;i++){
+      sp[j][i]=sp[j][i]/norm;
+      //  cout << "sp tenzor "<< sp[j][i] << endl;
+    }	
+  }
+  float lre[3];
+  JAMMA::Eigenvalue test(sp);
+  test.getRealEigenvalues(lre);
+  // cout << lre[0] << "   " << lre[1] << "  " << lre[2] << endl;  
+  float sphericity;
+  float aplanarity;
+  sphericity=1.5*(lre[0]+lre[1]);
+  aplanarity=1.5*lre[0];
+
+  event_sphericity = sphericity;
+  event_aplanarity = aplanarity;
+
+}
+
+Double_t ulAngle(Double_t x, Double_t y)
+{
+  Double_t ulangl = 0;
+  Double_t r = TMath::Sqrt(x*x + y*y);
+  if ( r < 1.0E-20 ) {
+    return ulangl; 
+  }
+  if ( TMath::Abs(x)/r < 0.8 ) {
+    ulangl = sign(TMath::ACos(x/r),y);
+  } else {
+    ulangl = TMath::ASin(y/r);
+    if ( x < 0. && ulangl >= 0. ) {
+      ulangl = TMath::Pi() - ulangl;
+    } else if ( x < 0. ) {
+      ulangl = -TMath::Pi() - ulangl;
+    }
+  }
+  return ulangl;
+}
+
+Double_t sign(Double_t a, Double_t b) {
+  if ( b < 0 ) {
+    return -TMath::Abs(a);
+  } else {
+    return TMath::Abs(a);
+  }
+}
+
+void ludbrb(TMatrixD* mom, Double_t the, Double_t phi, Double_t bx, Double_t by, Double_t bz) {
+  // Ignore "zeroth" elements in rot,pr,dp.
+  // Trying to use physics-like notation.
+  TMatrixD rot(4,4);
+  Double_t pr[4];
+  Double_t dp[5];
+  Int_t np = mom->GetNrows();
+  if ( the*the + phi*phi > 1.0E-20 )
+    {
+      rot(1,1) = TMath::Cos(the)*TMath::Cos(phi);
+      rot(1,2) = -TMath::Sin(phi);
+      rot(1,3) = TMath::Sin(the)*TMath::Cos(phi);
+      rot(2,1) = TMath::Cos(the)*TMath::Sin(phi);
+      rot(2,2) = TMath::Cos(phi);
+      rot(2,3) = TMath::Sin(the)*TMath::Sin(phi);
+      rot(3,1) = -TMath::Sin(the);
+      rot(3,2) = 0.0;
+      rot(3,3) = TMath::Cos(the);
+      for ( Int_t i = 0; i < np; i++ ) {
+        for ( Int_t j = 1; j < 4; j++ ) {
+          pr[j] = (*mom)(i,j);
+          (*mom)(i,j) = 0;
+        }
+        for ( Int_t jb = 1; jb < 4; jb++) {
+          for ( Int_t k = 1; k < 4; k++) {
+            (*mom)(i,jb) = (*mom)(i,jb) + rot(jb,k)*pr[k];
+          }
+        }
+      }
+      Double_t beta = TMath::Sqrt( bx*bx + by*by + bz*bz );
+      if ( beta*beta > 1.0E-20 ) {
+        if ( beta >  0.99999999 ) {
+          //send message: boost too large, resetting to <~1.0.
+          bx = bx*(0.99999999/beta);
+          by = by*(0.99999999/beta);
+          bz = bz*(0.99999999/beta);
+          beta =   0.99999999;
+        }
+        Double_t gamma = 1.0/TMath::Sqrt(1.0 - beta*beta);
+        for ( Int_t i = 0; i < np; i++ ) {
+          for ( Int_t j = 1; j < 5; j++ ) {
+            dp[j] = (*mom)(i,j);
+          }
+          Double_t bp = bx*dp[1] + by*dp[2] + bz*dp[3];
+          Double_t gbp = gamma*(gamma*bp/(1.0 + gamma) + dp[4]);
+          (*mom)(i,1) = dp[1] + gbp*bx;
+          (*mom)(i,2) = dp[2] + gbp*by;
+          (*mom)(i,3) = dp[3] + gbp*bz;
+          (*mom)(i,4) = gamma*(dp[4] + bp);
+        }
+      }
+    }
+  return;
+}
+
+Int_t iPow(Int_t man, Int_t exp) {
+  Int_t ans = 1;
+  for( Int_t k = 0; k < exp; k++) {
+    ans = ans*man;
+  }
+  return ans;
+}
