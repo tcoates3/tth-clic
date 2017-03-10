@@ -84,6 +84,7 @@
     <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> kt_6jets </parameter>
     <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOsWithoutIsoLep_Selected </parameter>
     <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+    <parameter name="storeParticlesInJets" type="bool">true</parameter>
     <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOsIn6Jets </parameter> 
   </processor>
 
